@@ -1,0 +1,4 @@
+﻿  CAAAAAAAAP.cpp
+DSH_EasyWin32.lib(EasyAPI.obj) : error LNK2001: "class SystemMessageMap g_system_map" (?g_system_map@@3VSystemMessageMap@@A) 외부 기호를 확인할 수 없습니다.
+DSH_EasyWin32.lib(EasyWin32.obj) : error LNK2001: "class SystemMessageMap g_system_map" (?g_system_map@@3VSystemMessageMap@@A) 외부 기호를 확인할 수 없습니다.
+D:\Vis\CAAAAAAAAP\Debug\CAAAAAAAAP.exe : fatal error LNK1120: 1개의 확인할 수 없는 외부 참조입니다.
