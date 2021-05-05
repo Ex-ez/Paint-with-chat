@@ -1,0 +1,89 @@
+#include "pch.h"
+#include <stdio.h>   
+#include "tipsware.h"
+
+#pragma comment(lib, "WS2_32.lib")   // Windows Socket API 이용
+
+
+struct AppData
+{
+	void *p_client_socket;  
+};
+
+void MyConnectToServer(void *ap_this, int a_client_index)
+{
+	char temp_str[64];
+	if (IsConnect(ap_this)) sprintf_s(temp_str, 64, "서버에 접속했습니다!!");
+	else sprintf_s(temp_str, 64, "서버에 접속할 수 없습니다.!!");
+	ListBox_InsertString(FindControl(1000), -1, temp_str);
+}
+
+int MyNetMessageFromServer(CurrentClientNetworkData *ap_data, void *ap_this, int a_client_index)
+{
+	if (ap_data->m_net_msg_id == 1) {
+		ListBox_InsertString(FindControl(1000), -1, ap_data->mp_net_body_data);
+	}
+	return 1;
+}
+
+void MyCloseUser(void *ap_this, int a_error_flag, int a_client_index)
+{
+	char temp_str[64];
+	if (a_error_flag == 1) sprintf_s(temp_str, 64, "서버에서 접속을 해제했습니다.");
+	else sprintf_s(temp_str, 64, "서버와 접속을 해제했습니다."); 
+	ListBox_InsertString(FindControl(1000), -1, temp_str);
+}
+
+void OnCommand(INT32 a_ctrl_id, INT32 a_notify_code, void *ap_ctrl)
+{
+	AppData *p_app_data = (AppData *)GetAppData();
+
+	if (a_ctrl_id == 1003 ||  
+		(a_ctrl_id == 1004 && a_notify_code == 1000)) { 
+		void *p_edit = FindControl(1004);
+		char str[128]; 
+		GetCtrlName(p_edit, str, 128);
+		SetCtrlName(p_edit, "");
+
+		if (p_app_data->p_client_socket && IsConnect(p_app_data->p_client_socket)) {
+			SendFrameDataToServer(p_app_data->p_client_socket, 1, str, strlen(str) + 1);
+		}
+	} else if (a_ctrl_id == 1001) {  // [접속] 버튼을 누른 경우
+		if (p_app_data->p_client_socket == NULL) { 
+			// 객체가 만들어지기 전이라면 클라이언트 소켓 객체를 생성한다.
+			p_app_data->p_client_socket = CreateClientSocket(MyConnectToServer, MyNetMessageFromServer, MyCloseUser);
+		}
+
+		if (!IsConnect(p_app_data->p_client_socket)) { 
+			ConnectToServer(p_app_data->p_client_socket, "192.168.0.3", 25001);
+		}
+	} else if (a_ctrl_id == 1002) { 
+		if (p_app_data->p_client_socket != NULL) { 
+			DeleteClientSocket(p_app_data->p_client_socket);
+			p_app_data->p_client_socket = NULL;
+		}
+	}
+}
+
+CMD_MESSAGE(OnCommand)
+
+int main()
+{
+	AppData data = { NULL };
+	SetAppData(&data, sizeof(AppData));
+
+	Clear(0, RGB(72, 87, 114)); 
+	StartSocketSystem(); 
+
+	CreateListBox(10, 36, 500, 300, 1000); 
+	CreateButton("접속", 407, 3, 50, 28, 1001); 
+	CreateButton("해제", 460, 3, 50, 28, 1002); 
+	CreateButton("입력", 460, 340, 50, 28, 1003);
+	void *p = CreateEdit(10, 343, 446, 24, 1004, 0); 
+	EnableEnterKey(p); 
+
+	SelectFontObject("굴림", 12); 
+	TextOut(15, 10, RGB(200, 255, 200), "사용자 채팅글 목록"); 
+	ShowDisplay(); 
+	return 0;
+}
