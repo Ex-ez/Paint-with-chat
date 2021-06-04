@@ -104,9 +104,9 @@ RUD* FindUserID(AppData* ap_data, const char* ap_user_id)
 
 void CopyControlDataToMemory(int a_ctrl_id, char* ap_memory, int a_mem_size)
 {
-	void* p_edit = FindControl(a_ctrl_id); // 에디트 컨트롤의 주소를 얻는다.
-	GetCtrlName(p_edit, ap_memory, a_mem_size); // 에디터 컨트롤에 입력된 문자열을 메모리에 복사한다.
-	SetCtrlName(p_edit, ""); // 에디트 컨트롤에 쓰여진 문자열을 지운다.
+	void* p_edit = FindControl(a_ctrl_id); 
+	GetCtrlName(p_edit, ap_memory, a_mem_size); 
+	SetCtrlName(p_edit, "");
 }
 
 // 사용자 정보가 입력된 컨트롤에서 정보를 읽어 사용자 목록에 추가하는 함수
@@ -115,8 +115,8 @@ void RegisteringUserData()
 	AppData* p_data = (AppData*)GetAppData();
 
 	char str[32];
-	void* p_edit = FindControl(ID_EDIT_ID); // 아이디 입력용 에디트 컨트롤의 주소를 얻는다.
-	GetCtrlName(p_edit, str, 32); // 에디터 컨트롤에 입력된 문자열을 str 배열에 복사한다.
+	void* p_edit = FindControl(ID_EDIT_ID);
+	GetCtrlName(p_edit, str, 32); 
 	int id_len = strlen(str) + 1;  // 입력된 아이디의 길이를 구한다.
 	if (id_len > 5) { // 아이디는 최소 5자 이상이어야 한다.
 		if (NULL == FindUserID(p_data, str)) {  // 동일한 아이디를 사용하는지 체크한다!
@@ -126,19 +126,13 @@ void RegisteringUserData()
 			RUD* p_temp_user = (RUD*)malloc(sizeof(RUD));
 			if (p_temp_user != NULL) {
 				memcpy(p_temp_user->id, str, id_len);  // 사용자 ID를 사용자 정보에 저장한다.
-				// 암호 입력용 에디트 컨트롤에서 문자열을 가져온다.
 				CopyControlDataToMemory(ID_EDIT_PASSWORD, p_temp_user->pw, 32);
-				// 별명 입력용 에디트 컨트롤에서 문자열을 가져온다.
 				CopyControlDataToMemory(ID_EDIT_NICKNAME, p_temp_user->nickname, 32);
-				// 등급 입력용 콤보 컨트롤에 선택된 등급을 가져온다.
 				p_temp_user->level = ComboBox_GetCurSel(FindControl(ID_CB_LEVEL));
 				p_temp_user->p_socket = NULL;   // 사용자 접속 정보를 초기화한다.
 
-				// 사용자 ID로 정렬되도록 ID를 사용해서 추가한다.
 				int index = ListBox_AddString(p_data->p_user_list, p_temp_user->id, 0);
-				// 새로 추가된 항목에 사용자 정보의 주소를 함께 저장한다.
 				ListBox_SetItemDataPtr(p_data->p_user_list, index, p_temp_user);
-				// 추가된 항목에 선택(커서)을 설정한다.
 				ListBox_SetCurSel(p_data->p_user_list, index);
 			}
 		}
@@ -164,21 +158,21 @@ void OnCommand(INT32 a_ctrl_id, INT32 a_notify_code, void* ap_ctrl)
 		DrawImageGP(p_image, 15, 15, 0.25, 0.25);
 
 
-		ShowDisplay(); // 정보를 윈도우에 출력한다.
+		ShowDisplay(); 
 	}
 }
 
 // 사용자 목록에 등록된 정보를 파일에 저장하는 함수!
 void SaveUserData(const char* ap_file_name)
 {
-	FILE* p_file = NULL;  // 파일을 열어서 사용할 파일 포인터!
-	// fopen_s 함수를 사용하여 파일을 바이너리 형식의 쓰기 모드로 연다! (성공시 0반환)
+	FILE* p_file = NULL;  
+	
 	if (0 == fopen_s(&p_file, ap_file_name, "wb") && p_file != NULL) {
-		void* p_ctrl = FindControl(ID_LB_USER); // 사용자 목록 리스트 박스의 주소를 얻는다.
-		int count = ListBox_GetCount(p_ctrl); // 리스트 박스에 추가된 항목의 수를 얻는다.
-		fwrite(&count, sizeof(int), 1, p_file);  // 사용자 수를 파일에 저장한다.
+		void* p_ctrl = FindControl(ID_LB_USER); 
+		int count = ListBox_GetCount(p_ctrl);
+		fwrite(&count, sizeof(int), 1, p_file);  
 		for (int i = 0; i < count; i++) {
-			// i 번째 항목에 저장된 사용자 정보를 파일에 저장한다.
+			
 			fwrite(ListBox_GetItemDataPtr(p_ctrl, i), sizeof(RUD), 1, p_file);
 		}
 		fclose(p_file);  // 파일을 닫는다.
@@ -190,10 +184,10 @@ void DestoryUserData()
 {
 	SaveUserData("user_list.dat");
 
-	void* p_data, * p_ctrl = FindControl(ID_LB_USER);  // 사용자 목록이 저장된 리스트 박스의 주소를 얻는다.
-	int count = ListBox_GetCount(p_ctrl); // 리스트 박스에 추가된 항목의 수를 얻는다.   
-	for (int i = 0; i < count; i++) {  // 리스트 박스의 각 항목에 추가된 메모리를 모두 제거한다.
-		p_data = ListBox_GetItemDataPtr(p_ctrl, i);  // i 번째 항목에 저장된 주소를 가져온다.
+	void* p_data, * p_ctrl = FindControl(ID_LB_USER); .
+	int count = ListBox_GetCount(p_ctrl); .   
+	for (int i = 0; i < count; i++) {  
+		p_data = ListBox_GetItemDataPtr(p_ctrl, i);
 		free(p_data); // p_data가 가리키는 메모리를 해제한다.
 	}
 	ListBox_ResetContent(p_ctrl);  // 리스트 박스의 모든 항목을 제거한다.
