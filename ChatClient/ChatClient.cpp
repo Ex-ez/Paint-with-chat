@@ -230,10 +230,10 @@ void OnMouseLeftUp(int a_mixed_key, POINT a_pos)
 	}
 }
 
-// 마우스 왼쪽 버튼을 클릭, 해제 그리고 움직일 때 각 함수가 호출되도록 등록!
+
 MOUSE_CMD_MESSAGE(OnMouseLeftDown, OnMouseLeftUp, OnMouseMove, OnCommand)
 
-// 선 굵기 선택 리스트 박스에서 각 항목을 그리는 함수를 직접 구현함!
+
 void DrawThickItem(int index, char* ap_str, int a_str_len, void* ap_data, int a_is_selected, RECT* ap_rect)
 {
 
