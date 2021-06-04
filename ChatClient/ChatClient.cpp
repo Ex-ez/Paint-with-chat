@@ -193,11 +193,11 @@ void SendLineData(AppData* ap_data, POINT a_pos)
 	// 클라이언트 소켓 객체가 만들어져 있고 서버와 접속상태인지 확인한다.
 	if (ap_data->p_socket && IsConnect(ap_data->p_socket)) {
 		DrawLineData send_data;  // 선 그리기 정보를 저장할 구조체로 변수 선언!
-		send_data.color = ap_data->color;  // 선의 색상
-		send_data.thick = ap_data->thick;  // 선의 굵기
-		send_data.start_pos = ap_data->prev_pos;  // 선의 시작 좌표
-		send_data.end_pos = a_pos;   // 선의 끝 좌표
-		// 선 그리기 정보를 서버로 전송한다. 메시지 아이디는 2로 지정한다.
+		send_data.color = ap_data->color; 
+		send_data.thick = ap_data->thick;
+		send_data.start_pos = ap_data->prev_pos; 
+		send_data.end_pos = a_pos;
+		
 		SendFrameDataToServer(ap_data->p_socket, 2, &send_data, sizeof(DrawLineData));
 	}
 }
